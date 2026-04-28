@@ -9,52 +9,44 @@ const postList = document.querySelector("#post-list");
 const postCount = document.querySelector("#post-count");
 const formTitle = document.querySelector("#form-title");
 
-let posts = [
-  {
-    id: 1,
-    title: "첫 번째 게시글입니다",
-    author: "운영진",
-    content: "CRUD 실습을 위한 예시 게시글입니다.",
-    createdAt: "2026-04-28"
-  }
-];
+const API_URL = "http://localhost:3000/posts";
 
-let nextId = 2;
+let posts = [];
 
-function createPost(title, author, content) {
-  posts.push({
-    id: nextId,
-    title,
-    author,
-    content,
-    createdAt: getToday()
+async function createPost(title, author, content) {
+  await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ title, author, content })
   });
-
-  nextId += 1;
 }
 
-function readPosts() {
-  return posts;
+async function readPosts() {
+  const response = await fetch(API_URL);
+  return response.json();
 }
 
-function updatePost(id, title, author, content) {
-  const post = posts.find((item) => item.id === id);
-
-  if (!post) {
-    return;
-  }
-
-  post.title = title;
-  post.author = author;
-  post.content = content;
+async function updatePost(id, title, author, content) {
+  await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ title, author, content })
+  });
 }
 
-function deletePost(id) {
-  posts = posts.filter((post) => post.id !== id);
+async function deletePost(id) {
+  await fetch(`${API_URL}/${id}`, {
+    method: "DELETE"
+  });
 }
 
-function renderPosts() {
-  const currentPosts = readPosts();
+async function renderPosts() {
+  const currentPosts = await readPosts();
+  posts = currentPosts;
   postCount.textContent = `${currentPosts.length}개`;
 
   if (currentPosts.length === 0) {
@@ -76,7 +68,7 @@ function renderPosts() {
             <small>${post.content}</small>
           </td>
           <td>${post.author}</td>
-          <td>${post.createdAt}</td>
+          <td>${post.created_at}</td>
           <td>
             <button class="small-button" onclick="startEdit(${post.id})">수정</button>
             <button class="small-button danger" onclick="removePost(${post.id})">삭제</button>
@@ -103,14 +95,14 @@ function startEdit(id) {
   cancelButton.hidden = false;
 }
 
-function removePost(id) {
+async function removePost(id) {
   const isConfirmed = confirm("게시글을 삭제할까요?");
 
   if (!isConfirmed) {
     return;
   }
 
-  deletePost(id);
+  await deletePost(id);
   resetForm();
   renderPosts();
 }
@@ -132,7 +124,7 @@ function getToday() {
   return `${year}-${month}-${date}`;
 }
 
-postForm.addEventListener("submit", (event) => {
+postForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const title = titleInput.value.trim();
@@ -146,9 +138,9 @@ postForm.addEventListener("submit", (event) => {
   }
 
   if (editingId) {
-    updatePost(editingId, title, author, content);
+    await updatePost(editingId, title, author, content);
   } else {
-    createPost(title, author, content);
+    await createPost(title, author, content);
   }
 
   resetForm();

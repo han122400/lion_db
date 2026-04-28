@@ -1,0 +1,25 @@
+{
+  "name": "lion_db",
+  "version": "1.0.0",
+  "description": "HTML, CSS, JavaScript만으로 만든 간단한 게시판 CRUD 예제입니다.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/han122400/lion_db.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/han122400/lion_db/issues"
+  },
+  "homepage": "https://github.com/han122400/lion_db#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.3"
+  }
+}
